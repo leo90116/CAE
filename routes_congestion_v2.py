@@ -148,7 +148,7 @@ def main():
         destination = build_location(*DEFAULT_DESTINATION)
 
     if not API_KEY or API_KEY == "YOUR_API_KEY":
-        print("U need: export GOOGLE_MAPS_API_KEY=AIzaSyBqoWCXUq7nbXxKvBhlXytgv7qfUEHZ2s0 ")
+        print("U need: export GOOGLE_MAPS_API_KEY= BALABALA ")
         sys.exit(1)
 
     get_route_with_traffic(origin, destination, API_KEY)
