@@ -45,7 +45,7 @@ def main():
 
     if not API_KEY or API_KEY == "YOUR_API_KEY":
         print(
-            "U need export GOOGLE_MAPS_API_KEY=AIzaSyBqoWCXUq7nbXxKvBhlXytgv7qfUEHZ2s0 "
+            "U need export GOOGLE_MAPS_API_KEY= BALABALA "
         )
         return
 
