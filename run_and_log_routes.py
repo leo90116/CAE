@@ -5,7 +5,7 @@ from datetime import datetime
 
 # CONFIGURATION
 SCRIPT_PATH = "routes_congestion_v2_grpc.py"  # Path to your congestion script
-EXCEL_PATH = "route_log_test.xlsx"
+EXCEL_PATH = f"route_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
 
 # Scheduled run window and interval
 # These will be set by command-line arguments
