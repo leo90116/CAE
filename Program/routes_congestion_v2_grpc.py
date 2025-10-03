@@ -1,5 +1,10 @@
 import os
 import sys
+import datetime
+
+from google.protobuf.json_format import MessageToDict
+
+# --- Google Maps Routing gRPC imports ---
 from google.maps.routing_v2.services.routes import RoutesClient
 from google.maps.routing_v2.types import (
     ComputeRoutesRequest,
@@ -7,8 +12,8 @@ from google.maps.routing_v2.types import (
     RoutingPreference,
     Waypoint,
 )
-from google.protobuf.json_format import MessageToDict
-import datetime
+from google.api_core.client_options import ClientOptions
+from google.auth.credentials import AnonymousCredentials
 
 API_KEY = os.getenv(
     "GOOGLE_MAPS_API_KEY", "YOUR_API_KEY"
@@ -50,7 +55,10 @@ def main():
         return
 
     # gRPC client
-    client = RoutesClient()
+    client = RoutesClient(
+    client_options=ClientOptions(api_key=API_KEY)
+)
+
 
     # Request trafficCondition and other relevant fields
     metadata = [
