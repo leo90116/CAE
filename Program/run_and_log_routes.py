@@ -48,9 +48,9 @@ def parse_output(output):
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "start_point": None,
         "end_point": None,
+        "distance": None,
         "duration_with_traffic": None,
         "duration_no_traffic": None,
-        "congestion_status": None,
         "difference_seconds": None,
         "difference_percent": None,
     }
