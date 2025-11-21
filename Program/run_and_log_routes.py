@@ -126,7 +126,8 @@ def parse_args():
     return parser.parse_args()
 
 def move_excel_file():
-    subprocess.run(["mv", EXCEL_PATH, "~/CAE/Data/]", shell=True])
+    cmd = f"mv '{EXCEL_PATH}' ~/CAE/Data/"
+    subprocess.run(cmd, shell=True, check=True)
 
 def main():
     args = parse_args()
