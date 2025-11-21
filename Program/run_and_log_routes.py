@@ -128,6 +128,12 @@ def parse_args():
 def move_excel_file():
     cmd = f"mv '{EXCEL_PATH}' ~/CAE/Data/"
     subprocess.run(cmd, shell=True, check=True)
+    print("file has moved to Data folder")
+
+def move_Data_to_PC():
+    cmd = "rsync -avz ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Test"
+    subprocess.run(cmd, shell=True, check=True)
+    print("file has moved to PC")
 
 def main():
     args = parse_args()
@@ -182,6 +188,8 @@ def main():
     else:
         print("Completed all scheduled runs.")
         move_excel_file()
+        move_Data_to_PC()
+        
 
 
 if __name__ == "__main__":
