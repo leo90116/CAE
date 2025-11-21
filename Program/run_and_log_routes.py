@@ -125,6 +125,8 @@ def parse_args():
     )
     return parser.parse_args()
 
+def move_excel_file():
+    subprocess.run(["mv", EXCEL_PATH, "~/CAE/Data/]", shell=True])
 
 def main():
     args = parse_args()
@@ -176,6 +178,9 @@ def main():
         )
         next_run += interval
         t += 1
+    else:
+        print("Completed all scheduled runs.")
+        move_excel_file()
 
 
 if __name__ == "__main__":
