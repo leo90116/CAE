@@ -1,12 +1,15 @@
+import argparse
+import re
 import subprocess
 import time
+from datetime import datetime, timedelta
+
 import pandas as pd
-from datetime import datetime
 
 # CONFIGURATION
 SCRIPT_PATH = "routes_congestion_v2_grpc.py"  # Path to your congestion script
-EXCEL_PATH = f"route_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
-
+EXCEL_PATH = f"../Data/route_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
+LOG_PATH = f"../Log/log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
 # Scheduled run window and interval
 # These will be set by command-line arguments
 START_TIME = None
@@ -19,9 +22,6 @@ def run_script():
     """Run the congestion script and capture its output."""
     result = subprocess.run(["python", SCRIPT_PATH], capture_output=True, text=True)
     return result.stdout
-
-
-import re
 
 
 def extract_point(line):
@@ -94,10 +94,6 @@ def log_to_excel(data):
     df.to_excel(EXCEL_PATH, index=False)
 
 
-import argparse
-from datetime import datetime, timedelta
-
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Run congestion script at scheduled intervals within a time window."
@@ -125,15 +121,24 @@ def parse_args():
     )
     return parser.parse_args()
 
-def move_excel_file():
-    cmd = f"mv '{EXCEL_PATH}' ~/CAE/Data/"
-    subprocess.run(cmd, shell=True, check=True)
-    print("file has moved to Data folder")
 
 def move_Data_to_PC():
     cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Test"
     subprocess.run(cmd, shell=True, check=True)
-    print("file has moved to PC")
+    line = "Datas has moved to PC"
+    print(line)
+    with open(LOG_PATH, "a") as log_file:
+        log_file.write(line + "\n")
+
+
+def move_Log_to_PC():
+    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Test"
+    subprocess.run(cmd, shell=True, check=True)
+    line = "Logs has moved to PC"
+    print(line)
+    with open(LOG_PATH, "a") as log_file:
+        log_file.write(line + "\n")
+
 
 def main():
     args = parse_args()
@@ -143,21 +148,31 @@ def main():
     interval = timedelta(minutes=args.interval_minutes, seconds=args.interval_seconds)
 
     if end_dt <= start_dt:
-        print("Error: End time must be after start time.")
+        line = "Error: End time must be after start time."
+        print(line)
+        with open(LOG_PATH, "a") as log_file:
+            log_file.write(line + "\n")
         return
     else:
-        print(f"Waiting until {args.start}")
+        line = f"Waiting until {args.start}"
+        print(line)
+        with open(LOG_PATH, "a") as log_file:
+            log_file.write(line + "\n")
 
     total_rounds = (
         int((end_dt - start_dt).total_seconds() // interval.total_seconds()) + 1
     )
-    print(
-        f"{total_rounds} rounds in {args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds"
-    )
+    line = f"{total_rounds} rounds in {args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds"
+    print(line)
+    with open(LOG_PATH, "a") as log_file:
+        log_file.write(line + "\n")
 
     now = datetime.now()
     if now > end_dt:
-        print("Current time is past the scheduled window. Exiting.")
+        line = "Current time is past the scheduled window. Exiting."
+        print(line)
+        with open(LOG_PATH, "a") as log_file:
+            log_file.write(line + "\n")
         return
 
     if now < start_dt:
@@ -180,16 +195,20 @@ def main():
         output = run_script()
         data = parse_output(output)
         log_to_excel(data)
-        print(
-            f"Round {t}: Logged at {data['timestamp']} ({args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds): {data}"
-        )
+        line = f"Round {t}: Logged at {data['timestamp']} ({args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds): {data}"
+        print(line)
+        with open(LOG_PATH, "a") as log_file:
+            log_file.write(line + "\n")
+
         next_run += interval
         t += 1
     else:
-        print("Completed all scheduled runs.")
-        move_excel_file()
+        line = "Completed all scheduled runs."
+        print(line)
+        with open(LOG_PATH, "a") as log_file:
+            log_file.write(line + "\n")
         move_Data_to_PC()
-        
+        move_Log_to_PC()
 
 
 if __name__ == "__main__":
