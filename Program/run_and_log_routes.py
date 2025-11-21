@@ -1,9 +1,10 @@
+import argparse
+import re
 import subprocess
 import time
-import pandas as pd
-import re
-import argparse
 from datetime import datetime, timedelta
+
+import pandas as pd
 
 # CONFIGURATION
 SCRIPT_PATH = "routes_congestion_v2_grpc.py"  # Path to your congestion script
@@ -15,7 +16,6 @@ START_TIME = None
 END_TIME = None
 INTERVAL_MINUTES = None
 INTERVAL_SECONDS = None
-
 
 
 def run_script():
@@ -119,16 +119,25 @@ def parse_args():
         required=True,
         help="Additional interval seconds (e.g., 0)",
     )
-    return parser.parse_args()   
+    return parser.parse_args()
 
 
 def move_Data_to_PC():
     cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Test"
     subprocess.run(cmd, shell=True, check=True)
-    line = "file has moved to PC"
+    line = "Datas has moved to PC"
     print(line)
     with open(LOG_PATH, "a") as log_file:
-        log_file.write(line+"\n")
+        log_file.write(line + "\n")
+
+
+def move_Log_to_PC():
+    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Test"
+    subprocess.run(cmd, shell=True, check=True)
+    line = "Logs has moved to PC"
+    print(line)
+    with open(LOG_PATH, "a") as log_file:
+        log_file.write(line + "\n")
 
 
 def main():
@@ -142,28 +151,28 @@ def main():
         line = "Error: End time must be after start time."
         print(line)
         with open(LOG_PATH, "a") as log_file:
-            log_file.write(line+"\n")
+            log_file.write(line + "\n")
         return
     else:
         line = f"Waiting until {args.start}"
         print(line)
         with open(LOG_PATH, "a") as log_file:
-            log_file.write(line+"\n")
+            log_file.write(line + "\n")
 
     total_rounds = (
         int((end_dt - start_dt).total_seconds() // interval.total_seconds()) + 1
     )
-    line =f"{total_rounds} rounds in {args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds"
+    line = f"{total_rounds} rounds in {args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds"
     print(line)
     with open(LOG_PATH, "a") as log_file:
-        log_file.write(line+"\n")
-    
+        log_file.write(line + "\n")
+
     now = datetime.now()
     if now > end_dt:
-        line ="Current time is past the scheduled window. Exiting."
-        print(line)    
+        line = "Current time is past the scheduled window. Exiting."
+        print(line)
         with open(LOG_PATH, "a") as log_file:
-            log_file.write(line+"\n")
+            log_file.write(line + "\n")
         return
 
     if now < start_dt:
@@ -186,20 +195,20 @@ def main():
         output = run_script()
         data = parse_output(output)
         log_to_excel(data)
-        line =f"Round {t}: Logged at {data['timestamp']} ({args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds): {data}"
-        print(line)    
+        line = f"Round {t}: Logged at {data['timestamp']} ({args.start} to {args.end} / per {args.interval_minutes} minutes {args.interval_seconds} seconds): {data}"
+        print(line)
         with open(LOG_PATH, "a") as log_file:
-            log_file.write(line+"\n")
-        
+            log_file.write(line + "\n")
+
         next_run += interval
         t += 1
     else:
-        line ="Completed all scheduled runs."
-        print(line)    
+        line = "Completed all scheduled runs."
+        print(line)
         with open(LOG_PATH, "a") as log_file:
-            log_file.write(line+"\n")
+            log_file.write(line + "\n")
         move_Data_to_PC()
-        
+        move_Log_to_PC()
 
 
 if __name__ == "__main__":
