@@ -131,7 +131,7 @@ def move_excel_file():
     print("file has moved to Data folder")
 
 def move_Data_to_PC():
-    cmd = " rsync -avz --rsync-path=' C:\MSYS64\usr\bin\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Test"
+    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Test"
     subprocess.run(cmd, shell=True, check=True)
     print("file has moved to PC")
 
