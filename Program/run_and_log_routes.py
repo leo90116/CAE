@@ -7,9 +7,9 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 # CONFIGURATION
-SCRIPT_PATH = "routes_congestion_v2_grpc.py"  # Path to your congestion script
-EXCEL_PATH = f"../Data/route_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
-LOG_PATH = f"../Log/log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+SCRIPT_PATH = "Program/routes_congestion_v2_grpc.py"  # Path to your congestion script
+EXCEL_PATH = f"Data/route_log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.xlsx"
+LOG_PATH = f"Log/log_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
 # Scheduled run window and interval
 # These will be set by command-line arguments
 START_TIME = None
@@ -20,8 +20,10 @@ INTERVAL_SECONDS = None
 
 def run_script():
     """Run the congestion script and capture its output."""
-    result = subprocess.run(["python", SCRIPT_PATH], capture_output=True, text=True)
-    return result.stdout
+    result = subprocess.run(
+        ["python", SCRIPT_PATH], capture_output=True, text=True, check=True
+    )
+    return result.stdout + "\n" + result.stderr + "\n"
 
 
 def extract_point(line):
@@ -123,18 +125,18 @@ def parse_args():
 
 
 def move_Data_to_PC():
-    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Test"
+    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Data"
     subprocess.run(cmd, shell=True, check=True)
-    line = "Datas has moved to PC"
+    line = "Datas have moved to PC"
     print(line)
     with open(LOG_PATH, "a") as log_file:
         log_file.write(line + "\n")
 
 
 def move_Log_to_PC():
-    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Test"
+    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Log"
     subprocess.run(cmd, shell=True, check=True)
-    line = "Logs has moved to PC"
+    line = "Logs have moved to PC"
     print(line)
     with open(LOG_PATH, "a") as log_file:
         log_file.write(line + "\n")
