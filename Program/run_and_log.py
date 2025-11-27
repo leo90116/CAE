@@ -1,10 +1,14 @@
 import argparse
+import os
 import re
 import subprocess
 import time
 from datetime import datetime, timedelta
 
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # CONFIGURATION
 SCRIPT_PATH = "Program/routes_congestion_v2_grpc.py"  # Path to your congestion script
@@ -196,11 +200,12 @@ def parse_args():
         required=True,
         help="Interval between runs (e.g. 10m, 30s, 1h, 1h30m, 1m30s).",
     )
+    parser.add_argument("--test", action="store_true", help="Run without API key")
     return parser.parse_args()
 
 
 def move_Data_to_PC():
-    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Log"
+    cmd = "rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Data"
     status = subprocess.run(cmd, shell=True)
     if status.returncode == 0:
         line = "\n==Datas have moved to PC=="
@@ -212,27 +217,44 @@ def move_Data_to_PC():
         print(line)
         with open(LOG_PATH, "a") as log_file:
             log_file.write(line + "\n")
-        return
+        exit()
 
-
-"""
 
 def move_Log_to_PC():
-    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Log"
-    subprocess.run(cmd, shell=True, check=True)
-    if check == True:
-        line = "Logs have moved to PC"
+    cmd = "rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Log"
+    status = subprocess.run(cmd, shell=True)
+    if status.returncode == 0:
+        line = "\n==Logs have moved to PC=="
+        print(line)
+        with open(LOG_PATH, "a") as log_file:
+            log_file.write(line + "\n")
     else:
-        line = "CHECK YOUR PC"
-    print(line)
-    with open(LOG_PATH, "a") as log_file:
-        log_file.write(line + "\n")
-"""
+        line = "\n!! rsync failed CHECK YOUR PC !!"
+        print(line)
+        with open(LOG_PATH, "a") as log_file:
+            log_file.write(line + "\n")
+        exit()
+
+
+def check_api_key():
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+    if not api_key:
+        print("!!API key not found!!\n")
+        print("Please create a .env file with:")
+        print("GOOGLE_MAPS_API_KEY=your_key_here")
+        exit()
 
 
 def main():
     check_api_key()
     args = parse_args()
+
+    if not args.test:
+        load_dotenv()
+        check_api_key()
+        print("==API key loaded successfully==")
+    else:
+        print("==TEST MODE==")
 
     # Determine total duration and interval
     try:
@@ -297,7 +319,7 @@ def main():
     with open(LOG_PATH, "a") as log_file:
         log_file.write(line + "\n")
     move_Data_to_PC()
-    # move_Log_to_PC()
+    move_Log_to_PC()
 
 
 if __name__ == "__main__":

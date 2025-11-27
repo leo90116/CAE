@@ -1,5 +1,7 @@
+import datetime
 import os
 import sys
+
 from google.maps.routing_v2.services.routes import RoutesClient
 from google.maps.routing_v2.types import (
     ComputeRoutesRequest,
@@ -8,11 +10,8 @@ from google.maps.routing_v2.types import (
     Waypoint,
 )
 from google.protobuf.json_format import MessageToDict
-import datetime
 
-API_KEY = os.getenv(
-    "GOOGLE_MAPS_API_KEY", "YOUR_API_KEY"
-)  # <-- Replace with your actual API key or set env var
+API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "YOUR_API_KEY")
 
 DEFAULT_ORIGIN = (25.080835, 121.565052)
 DEFAULT_DESTINATION = (25.068781, 121.584323)
@@ -42,12 +41,6 @@ def main():
     else:
         origin = build_waypoint(*DEFAULT_ORIGIN)
         destination = build_waypoint(*DEFAULT_DESTINATION)
-
-    if not API_KEY or API_KEY == "YOUR_API_KEY":
-        print(
-            "U need export GOOGLE_MAPS_API_KEY= BALABALA "
-        )
-        return
 
     # gRPC client
     client = RoutesClient()

@@ -1,6 +1,1 @@
-export GOOGLE_MAPS_API_KEY=AIzaSyBqoWCXUq7nbXxKvBhlXytgv7qfUEHZ2s0
-
-$env:GOOGLE_MAPS_API_KEY="AIzaSyBqoWCXUq7nbXxKvBhlXytgv7qfUEHZ2s0"
-
-uv run Program/run_and_log_routes.py --start 00:00 --end 23:59 --interval-minutes 5 --interval-seconds 0
-
+AIzaSyBqoWCXUq7nbXxKvBhlXytgv7qfUEHZ2s0
