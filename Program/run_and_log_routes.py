@@ -125,7 +125,7 @@ def parse_args():
 
 
 def move_Data_to_PC():
-    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Data"
+    cmd = "rsync -avz --rsync-path='C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Data/ leo90@192.168.1.105:/d/臺大/CAE/Data"
     subprocess.run(cmd, shell=True, check=True)
     line = "Datas have moved to PC"
     print(line)
@@ -134,7 +134,7 @@ def move_Data_to_PC():
 
 
 def move_Log_to_PC():
-    cmd = " rsync -avz --rsync-path=' C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Log"
+    cmd = "rsync -avz --rsync-path='C:\\MSYS64\\usr\\bin\\rsync.exe' ~/CAE/Log/ leo90@192.168.1.105:/d/臺大/CAE/Log"
     subprocess.run(cmd, shell=True, check=True)
     line = "Logs have moved to PC"
     print(line)
